@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ballast — procurement trust layer for supply shocks</title>
+<meta name="description" content="When the Strait closes, businesses buy from strangers under pressure. Ballast risk-scores unfamiliar suppliers, offers, and payment instructions so you don't wire six figures to a scam.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#eaeef5; --surface:#ffffff; --surface-2:#f6f8fc; --surface-3:#eef2f9;
+    --ink:#0f1a2b; --ink-2:#2b3a52; --muted:#5f6f88; --dim:#93a0b5; --line:#e2e8f2; --line-2:#d3dbe9;
+    --primary:#0d8b9c; --primary-d:#0a707e; --primary-t:#e2f7f8;
+    --coral:#ff6a55; --coral-d:#ec4f3a; --coral-t:#ffeee9;
+    --go:#12a150; --go-t:#e7f8ee;
+    --caution:#e8890c; --caution-t:#fdf1df;
+    --stop:#e5484d; --stop-t:#fdeaea;
+    --blue:#2f6bff; --blue-t:#eaf1ff;
+    --sans:"Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    --shadow:0 1px 2px rgba(16,26,43,.04),0 4px 16px rgba(16,26,43,.06);
+    --shadow-lg:0 8px 30px rgba(16,26,43,.10);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased;font-feature-settings:"tnum";}
+
+  /* ---------- top bar ---------- */
+  .topbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+  .topbar-inner{max-width:1100px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;gap:20px;}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px;letter-spacing:-.02em;color:var(--ink);}
+  .brand .mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--primary),#0a6b78);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(13,139,156,.35);}
+  .brand .mark svg{width:17px;height:17px;}
+  .brand small{font-weight:500;font-size:12px;color:var(--dim);margin-left:3px;letter-spacing:0;}
+  nav.views{display:flex;gap:2px;margin-left:auto;background:var(--surface-3);padding:4px;border-radius:11px;}
+  nav.views button{font-family:var(--sans);font-weight:600;font-size:13px;color:var(--muted);background:transparent;border:none;padding:8px 15px;border-radius:8px;cursor:pointer;transition:.15s;}
+  nav.views button:hover{color:var(--ink);}
+  nav.views button.active{color:var(--primary);background:var(--surface);box-shadow:var(--shadow);}
+
+  .wrap{max-width:1100px;margin:0 auto;padding:30px 24px 90px;}
+  .view{display:none;}
+  .view.active{display:block;animation:fade .35s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+  .eyebrow{font-weight:700;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--primary);margin:0 0 14px;}
+  h1{font-weight:800;font-size:clamp(27px,4vw,38px);line-height:1.14;letter-spacing:-.025em;margin:0 0 12px;color:var(--ink);}
+  .sub{color:var(--muted);font-size:16.5px;max-width:700px;margin:0 0 30px;font-weight:500;}
+
+  /* ---------- scenario banner ---------- */
+  .scenario{background:linear-gradient(100deg,var(--stop-t),var(--surface));border:1px solid #f6cfcf;border-radius:16px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;box-shadow:var(--shadow);}
+  .pulse{width:12px;height:12px;border-radius:50%;background:var(--stop);flex-shrink:0;animation:pulse 2s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(229,72,77,.45);}70%{box-shadow:0 0 0 13px rgba(229,72,77,0);}100%{box-shadow:0 0 0 0 rgba(229,72,77,0);}}
+  .scenario .txt{flex:1;min-width:250px;}
+  .scenario .status{font-weight:700;font-size:12px;color:var(--stop);letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;}
+  .scenario .headline{font-weight:600;font-size:16px;color:var(--ink-2);}
+  .scenario .day{font-weight:700;font-size:13px;color:var(--muted);white-space:nowrap;background:var(--surface);padding:8px 13px;border-radius:9px;border:1px solid var(--line);}
+
+  /* ---------- metric cards ---------- */
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:30px;}
+  .metric{background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:20px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+  .metric::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;}
+  .metric.m-blue::before{background:var(--blue);} .metric.m-red::before{background:var(--stop);}
+  .metric.m-green::before{background:var(--go);} .metric.m-teal::before{background:var(--primary);}
+  .metric .k{font-weight:600;font-size:12px;letter-spacing:.02em;text-transform:uppercase;color:var(--dim);margin-bottom:10px;}
+  .metric .v{font-weight:800;font-size:30px;letter-spacing:-.03em;line-height:1;}
+  .metric .v small{font-size:16px;font-weight:700;}
+  .metric.m-blue .v{color:var(--blue);} .metric.m-red .v{color:var(--stop);}
+  .metric.m-green .v{color:var(--go);} .metric.m-teal .v{color:var(--primary);}
+
+  .grid-2{display:grid;grid-template-columns:1.35fr 1fr;gap:20px;}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:var(--shadow);}
+  .card h3{font-weight:700;font-size:16px;margin:0 0 18px;display:flex;align-items:center;justify-content:space-between;color:var(--ink);}
+  .card h3 .count{font-weight:600;font-size:12px;color:var(--coral);background:var(--coral-t);padding:4px 10px;border-radius:20px;}
+
+  /* ---------- route list ---------- */
+  .route{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:14.5px;font-weight:500;}
+  .route:last-child{border-bottom:none;}
+  .route .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+  .dot.blocked{background:var(--stop);} .dot.strained{background:var(--caution);} .dot.open{background:var(--go);}
+  .route .name{flex:1;color:var(--ink-2);}
+  .route .tag{font-weight:700;font-size:11px;letter-spacing:.03em;padding:3px 9px;border-radius:6px;}
+  .tag-blocked{color:var(--stop);background:var(--stop-t);} .tag-strained{color:var(--caution);background:var(--caution-t);} .tag-open{color:var(--go);background:var(--go-t);}
+
+  /* ---------- feed ---------- */
+  .feed-item{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);}
+  .feed-item:last-child{border-bottom:none;}
+  .feed-item .body{font-size:14px;}
+  .feed-item .body .who{font-weight:700;color:var(--ink);}
+  .feed-item .body .meta{font-size:12px;color:var(--dim);margin-top:3px;font-weight:500;}
+
+  /* ---------- badges ---------- */
+  .badge{font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;padding:4px 11px;border-radius:20px;white-space:nowrap;display:inline-flex;align-items:center;}
+  .badge.go{color:var(--go);background:var(--go-t);} .badge.caution{color:var(--caution);background:var(--caution-t);} .badge.stop{color:#fff;background:var(--stop);}
+
+  /* ---------- offers ---------- */
+  .offers{display:grid;gap:13px;}
+  .offer-row{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:18px;cursor:pointer;transition:.16s;box-shadow:var(--shadow);}
+  .offer-row:hover{border-color:var(--line-2);box-shadow:var(--shadow-lg);transform:translateY(-1px);}
+  .offer-row .supplier{flex:1;min-width:0;}
+  .offer-row .supplier .nm{font-weight:700;font-size:15.5px;color:var(--ink);}
+  .offer-row .supplier .dsc{font-size:13.5px;color:var(--muted);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .offer-row .amt{font-weight:700;font-size:15px;color:var(--ink-2);white-space:nowrap;}
+  .score-pill{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;flex-shrink:0;}
+  .score-pill.go{color:var(--go);background:var(--go-t);} .score-pill.caution{color:var(--caution);background:var(--caution-t);} .score-pill.stop{color:var(--stop);background:var(--stop-t);}
+
+  /* ---------- analyze ---------- */
+  .analyze-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;}
+  textarea{width:100%;min-height:250px;background:var(--surface);border:1.5px solid var(--line-2);border-radius:14px;padding:16px;color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.6;resize:vertical;font-weight:500;}
+  textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-t);}
+  .samples{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0;}
+  .samples button{font-weight:600;font-size:12.5px;color:var(--ink-2);background:var(--surface);border:1px solid var(--line-2);border-radius:9px;padding:8px 13px;cursor:pointer;transition:.15s;}
+  .samples button:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-t);}
+  .run-btn{width:100%;font-family:var(--sans);font-weight:700;font-size:15px;color:#fff;background:var(--primary);border:none;border-radius:12px;padding:15px;cursor:pointer;transition:.15s;box-shadow:0 4px 14px rgba(13,139,156,.3);}
+  .run-btn:hover{background:var(--primary-d);}
+  .run-btn:disabled{opacity:.55;cursor:default;}
+
+  .result{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;min-height:250px;box-shadow:var(--shadow);}
+  .result.empty{display:flex;align-items:center;justify-content:center;text-align:center;color:var(--dim);font-size:14px;font-weight:500;}
+  .verdict-head{display:flex;align-items:center;gap:18px;margin-bottom:4px;}
+  .gauge{width:82px;height:82px;flex-shrink:0;position:relative;}
+  .gauge svg{transform:rotate(-90deg);}
+  .gauge .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:25px;}
+  .verdict-head .vtxt .lbl{font-weight:600;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);}
+  .verdict-head .vtxt .word{font-weight:800;font-size:27px;line-height:1.1;letter-spacing:-.02em;}
+  .rec{font-size:14.5px;color:var(--ink-2);font-weight:500;margin:16px 0 20px;padding:14px 16px;border-radius:11px;}
+  .signals{display:grid;gap:0;}
+  .signal{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-top:1px solid var(--line);}
+  .signal .sdot{width:10px;height:10px;border-radius:50%;margin-top:6px;flex-shrink:0;}
+  .signal .sbody{flex:1;}
+  .signal .sname{font-size:14px;font-weight:700;display:flex;justify-content:space-between;gap:10px;color:var(--ink);}
+  .signal .sname .pts{font-weight:700;font-size:13px;}
+  .signal .sdesc{font-size:13px;color:var(--muted);margin-top:3px;font-weight:500;}
+
+  /* ---------- how ---------- */
+  .arch{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;box-shadow:var(--shadow);}
+  .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0;}
+  .flow-node{text-align:center;padding:0 12px;position:relative;}
+  .flow-node .ico{width:54px;height:54px;margin:0 auto 14px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:var(--shadow);}
+  .flow-node:nth-child(1) .ico{background:var(--blue-t);} .flow-node:nth-child(2) .ico{background:var(--primary-t);}
+  .flow-node:nth-child(3) .ico{background:var(--caution-t);} .flow-node:nth-child(4) .ico{background:var(--go-t);}
+  .flow-node .ttl{font-weight:700;font-size:15px;margin-bottom:6px;color:var(--ink);}
+  .flow-node .dsc{font-size:12.5px;color:var(--muted);font-weight:500;}
+  .flow-node:not(:last-child)::after{content:"";position:absolute;right:-6px;top:26px;width:12px;height:2px;background:var(--line-2);}
+  .layer{margin-top:26px;padding-top:22px;border-top:1px solid var(--line);}
+  .layer h4{font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--primary);margin:0 0 12px;}
+  .chips{display:flex;gap:9px;flex-wrap:wrap;}
+  .chip{font-weight:600;font-size:12.5px;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);border-radius:9px;padding:7px 12px;}
+
+  .note{font-size:14px;color:var(--ink-2);font-weight:500;background:var(--primary-t);border:1px solid #bfe9ec;border-radius:12px;padding:16px 18px;margin-top:22px;}
+  .note strong{color:var(--primary-d);font-weight:700;}
+  .note.coral{background:var(--coral-t);border-color:#ffd4cb;}
+  .note.coral strong{color:var(--coral-d);}
+
+  footer{border-top:1px solid var(--line);margin-top:46px;padding-top:24px;font-size:13px;color:var(--dim);font-weight:500;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+
+  @media(max-width:820px){
+    .metrics{grid-template-columns:repeat(2,1fr);}
+    .grid-2,.analyze-grid{grid-template-columns:1fr;}
+    .flow{grid-template-columns:1fr 1fr;gap:26px 0;}
+    .flow-node::after{content:none!important;}
+    .brand small{display:none;}
+    nav.views button{padding:8px 11px;font-size:12.5px;}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;}}
+  button:focus-visible,textarea:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="mark"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4z" fill="#fff" opacity=".95"/><path d="M9 12l2 2 4-4" stroke="#0d8b9c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      Ballast<small>procurement trust layer</small>
+    </div>
+    <nav class="views">
+      <button data-view="situation" class="active">Situation</button>
+      <button data-view="offers">Offers</button>
+      <button data-view="analyze">Analyze</button>
+      <button data-view="how">How it works</button>
+    </nav>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ============ SITUATION ============ -->
+  <section class="view situation active" id="situation">
+    <p class="eyebrow">The disruption</p>
+    <h1>A supply shock is a trust collapse before it's a logistics problem.</h1>
+    <p class="sub">When the Strait of Hormuz closes, your regular suppliers can't deliver. You're forced to buy fuel and feedstock from companies you've never dealt with — fast, under pressure, wiring money to unfamiliar accounts. That scramble is exactly when fraud, gouging, and payment-diversion scams win. Ballast is the layer that tells you who you can safely buy from.</p>
+
+    <div class="scenario">
+      <span class="pulse"></span>
+      <div class="txt">
+        <div class="status">● Route closed · sustained</div>
+        <div class="headline">Strait of Hormuz — transit suspended. ~20% of global oil &amp; a third of seaborne LNG affected.</div>
+      </div>
+      <div class="day">DAY 4 · 09:12 GST</div>
+    </div>
+
+    <div class="metrics">
+      <div class="metric m-blue"><div class="k">Offers screened</div><div class="v">147</div></div>
+      <div class="metric m-red"><div class="k">Flagged high-risk</div><div class="v">38</div></div>
+      <div class="metric m-green"><div class="k">Exposure blocked</div><div class="v">$2.4<small>M</small></div></div>
+      <div class="metric m-teal"><div class="k">New suppliers vetted</div><div class="v">52</div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>Incoming offers — live triage <span class="count">3 need review</span></h3>
+        <div class="offers" id="mini-offers"></div>
+      </div>
+      <div class="card">
+        <h3>Affected routes</h3>
+        <div class="route"><span class="dot blocked"></span><span class="name">Strait of Hormuz</span><span class="tag tag-blocked">Closed</span></div>
+        <div class="route"><span class="dot strained"></span><span class="name">Red Sea / Bab-el-Mandeb</span><span class="tag tag-strained">Strained</span></div>
+        <div class="route"><span class="dot strained"></span><span class="name">Cape of Good Hope reroute</span><span class="tag tag-strained">+14 days</span></div>
+        <div class="route"><span class="dot open"></span><span class="name">Pipeline: UAE → Fujairah</span><span class="tag tag-open">Open · capped</span></div>
+        <div class="route"><span class="dot open"></span><span class="name">Saudi East–West pipeline</span><span class="tag tag-open">Open · capped</span></div>
+        <h3 style="margin-top:24px;">Threat feed</h3>
+        <div class="feed-item"><div class="body"><span class="who">Emirates Energy Solutions Ltd</span> — bank details changed mid-deal. Likely payment diversion (BEC).<div class="meta">flagged 6 min ago</div></div></div>
+        <div class="feed-item"><div class="body"><span class="who">Hormuz Bypass Logistics</span> — quote 3.1× current benchmark, "expires in 2h".<div class="meta">flagged 22 min ago</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ OFFERS ============ -->
+  <section class="view offers" id="offers">
+    <p class="eyebrow">Offer triage</p>
+    <h1>Every inbound offer, risk-scored on arrival.</h1>
+    <p class="sub">During a shock, a procurement desk gets buried in offers from unknown sellers. Ballast scores each one the moment it lands, so your team spends its limited time on the deals worth doing — and never wires money to the ones that aren't. Tap any offer to see the breakdown.</p>
+    <div class="offers" id="full-offers"></div>
+  </section>
+
+  <!-- ============ ANALYZE ============ -->
+  <section class="view analyze" id="analyze">
+    <p class="eyebrow">Risk engine</p>
+    <h1>Paste an offer. Get a verdict, with reasons.</h1>
+    <p class="sub">Forward a supplier email, a broker message, or an invoice. Ballast reads it and returns a go / caution / stop verdict with the specific signals behind it — so the decision stays with a human, but an informed one. Try a sample, or paste your own text.</p>
+
+    <div class="analyze-grid">
+      <div>
+        <textarea id="offer-input" placeholder="Paste a supplier offer, broker message, or invoice text here…"></textarea>
+        <div class="samples">
+          <button data-sample="legit">Sample: established supplier</button>
+          <button data-sample="gouge">Sample: price gouger</button>
+          <button data-sample="scam">Sample: payment-diversion scam</button>
+        </div>
+        <button class="run-btn" id="run">Run risk analysis</button>
+      </div>
+      <div class="result empty" id="result">
+        Result appears here.<br>Paste text or pick a sample, then run.
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>Where the AI stops.</strong> Ballast never auto-blocks a payment. During a shock, a false positive that freezes a legitimate shipment is its own damage — so the engine advises, logs, and routes to a human. The score is an input to judgment, not a replacement for it.
+    </div>
+  </section>
+
+  <!-- ============ HOW ============ -->
+  <section class="view how" id="how">
+    <p class="eyebrow">Systems &amp; architecture</p>
+    <h1>What happens behind the verdict.</h1>
+    <p class="sub">The same pattern I built for consumer scam detection in ScamShield, retargeted at B2B procurement: ingest whatever the seller sends, extract the claims, score them against what a shock makes suspicious, and hand a human a decision they can defend.</p>
+
+    <div class="arch">
+      <div class="flow">
+        <div class="flow-node"><div class="ico">📥</div><div class="ttl">Ingest</div><div class="dsc">Email, broker chat, PDF/invoice, or pasted text. OCR pulls fields from scanned docs.</div></div>
+        <div class="flow-node"><div class="ico">🧩</div><div class="ttl">Extract</div><div class="dsc">Supplier identity, price, quantity, payment terms &amp; bank details, delivery claims.</div></div>
+        <div class="flow-node"><div class="ico">⚖️</div><div class="ttl">Score</div><div class="dsc">Four risk lenses run in parallel against live market &amp; disruption context.</div></div>
+        <div class="flow-node"><div class="ico">🧑‍⚖️</div><div class="ttl">Decide</div><div class="dsc">Verdict + reasons to a human. Logged for audit &amp; supplier reputation.</div></div>
+      </div>
+
+      <div class="layer">
+        <h4>The four risk lenses</h4>
+        <div class="chips">
+          <span class="chip">Supplier legitimacy — domain age, trade history, entity match</span>
+          <span class="chip">Payment integrity — advance %, changed / offshore accounts, BEC signals</span>
+          <span class="chip">Price anomaly — vs live benchmark (gouging &amp; too-good-to-be-true)</span>
+          <span class="chip">Delivery plausibility — quantity vs shortage, inspection refusal, route sanity</span>
+        </div>
+      </div>
+
+      <div class="layer">
+        <h4>Stack (prototype → production)</h4>
+        <div class="chips">
+          <span class="chip">Few-shot LLM classifier (Llama 3.3 / Claude)</span>
+          <span class="chip">EasyOCR — document extraction</span>
+          <span class="chip">Market price + route-status feeds</span>
+          <span class="chip">Supplier reputation store (Postgres)</span>
+          <span class="chip">FastAPI</span>
+          <span class="chip">Audit log</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="note coral">
+      <strong>Why this, for this shock.</strong> The prompt asks how businesses navigate the disruption. The disruption forces them to source from strangers at speed — and every past supply shock (Suez 2021, PPE 2020) saw supplier fraud and payment-diversion scams surge in the chaos. Ballast protects the capability that breaks first: the ability to trust who you're paying.
+    </div>
+  </section>
+
+  <footer>
+    <span>Ballast · prototype for the Polyinnovae AI Hackathon</span>
+    <span>Rithish P K · Strait of Hormuz challenge</span>
+  </footer>
+
+</div>
+
+<script>
+const SAMPLES = {
+  legit:`From: procurement@gulfpetrochem.ae
+Subject: Naphtha availability — Fujairah
+
+Following the Hormuz suspension we can supply 5,000 MT naphtha ex-Fujairah,
+liftable within 10 days via the UAE pipeline outlet.
+
+Price: USD 720/MT (current benchmark ~USD 660/MT given the disruption premium).
+Terms: 30% advance to our standard account on file, balance against B/L.
+Independent SGS inspection at loading — welcome to appoint your own surveyor.
+
+Gulf Petrochem Trading FZE — trading since 2016, DMCC registered.`,
+  gouge:`URGENT — ONE LOT LEFT
+We are the ONLY seller still moving product past Hormuz. 3,000 MT gasoil.
+Price USD 2,050/MT. This is final. Other buyers are waiting — offer EXPIRES IN 2 HOURS.
+Wire 100% now to secure. No inspection, no time — take it or leave it.
+Hormuz Bypass Logistics`,
+  scam:`Dear Valued Buyer,
+We have 8,000 MT diesel available for IMMEDIATE delivery, loading tomorrow.
+Price USD 400/MT — far below market, one-time clearance.
+Please note our bank account has CHANGED this week; wire 50% advance today to our
+new account (offshore) to lock allocation. Inspection not possible due to security.
+Send payment confirmation urgently.
+Emirates Energy Solutions Ltd  (emirates-energy-solutions@gmail.com)`
+};
+
+function analyze(text){
+  const t=(text||"").toLowerCase();
+  const signals=[]; let risk=0;
+
+  let pay=0,payNotes=[];
+  if(/bank.*(chang|updat|new)|(chang|updat|new).*(bank|account)/.test(t)){pay+=34;payNotes.push("bank details changed mid-deal — classic payment-diversion (BEC) pattern");}
+  if(/offshore|crypto|bitcoin|usdt/.test(t)){pay+=14;payNotes.push("payment routed offshore / to crypto");}
+  const adv=t.match(/(\d{2,3})\s*%\s*(advance|upfront|now)/);
+  if(adv&&parseInt(adv[1])>=50){pay+=16;payNotes.push("large upfront payment demanded ("+adv[1]+"% advance)");}
+  else if(/100%\s*(now|advance|upfront)|wire\s*(100%|full)/.test(t)){pay+=18;payNotes.push("full payment demanded before delivery");}
+  else if(adv){payNotes.push("advance of "+adv[1]+"% — within normal range for a shock");}
+  if(pay===0)payNotes.push("payment terms look standard (staged against shipping docs)");
+  signals.push({name:"Payment integrity",pts:pay,notes:payNotes}); risk+=pay;
+
+  let pr=0,prNotes=[];
+  if(/expires?\s*in|only.*(hour|hours)|act now|today only|immediate|urgent/.test(t)){pr+=15;prNotes.push("artificial time pressure — engineered urgency");}
+  if(/only (seller|lot|one)|last (lot|chance)|other buyers/.test(t)){pr+=10;prNotes.push("false scarcity / competing-buyer pressure");}
+  if(pr===0)prNotes.push("no manufactured urgency detected");
+  signals.push({name:"Pressure & manipulation",pts:pr,notes:prNotes}); risk+=pr;
+
+  let pc=0,pcNotes=[];
+  const price=t.match(/usd\s*([\d,]+)\s*\/?\s*mt/);
+  if(price){
+    const p=parseInt(price[1].replace(/,/g,""));
+    if(p>1500){pc+=20;pcNotes.push("price ~"+(p/660).toFixed(1)+"× the disruption benchmark — likely gouging");}
+    else if(p<500){pc+=22;pcNotes.push("price far below market during a shortage — too-good-to-be-true, hallmark of a scam");}
+    else if(p>700){pc+=6;pcNotes.push("elevated vs benchmark but plausible as a shock premium");}
+    else pcNotes.push("price in a sane band for current conditions");
+  } else pcNotes.push("no clear price to benchmark");
+  signals.push({name:"Price anomaly",pts:pc,notes:pcNotes}); risk+=pc;
+
+  let dl=0,dlNotes=[];
+  if(/no inspection|inspection not|no time.*inspect|cannot inspect/.test(t)){dl+=16;dlNotes.push("inspection refused — prevents verifying the cargo exists");}
+  if(/gmail|yahoo|hotmail|outlook\.com/.test(t)){dl+=14;dlNotes.push("free email domain for a large B2B energy deal");}
+  if(/immediate delivery|loading tomorrow|available now/.test(t)&&/shortage|suspend|closed|disruption|hormuz/.test(t)){dl+=10;dlNotes.push("implausibly fast availability during a supply shortage");}
+  if(/registered|dmcc|since \d{4}|trading since|sgs|surveyor/.test(t)){dl-=6;dlNotes.push("verifiable trade markers present (registration / independent inspection)");}
+  dl=Math.max(dl,0);
+  if(dlNotes.length===0)dlNotes.push("no strong legitimacy signals either way");
+  signals.push({name:"Delivery & supplier plausibility",pts:dl,notes:dlNotes}); risk+=dl;
+
+  risk=Math.min(Math.round(risk),100);
+  let verdict,rec;
+  if(risk>=55){verdict="stop";rec="Do not wire funds. Multiple high-risk signals consistent with fraud or gouging. Escalate for manual verification or walk away.";}
+  else if(risk>=25){verdict="caution";rec="Proceed only after verification: confirm bank details out-of-band, benchmark the price, and require independent inspection before any advance.";}
+  else{verdict="go";rec="No major red flags. Standard due diligence applies — verify registration and use staged payment against shipping documents.";}
+  return {risk,verdict,signals,rec};
+}
+
+const OFFERS=[
+  {nm:"Gulf Petrochem Trading FZE",dsc:"5,000 MT naphtha · ex-Fujairah · 30% advance",amt:"$3.6M",key:"legit"},
+  {nm:"Hormuz Bypass Logistics",dsc:"3,000 MT gasoil · 100% upfront · expires 2h",amt:"$6.2M",key:"gouge"},
+  {nm:"Emirates Energy Solutions Ltd",dsc:"8,000 MT diesel · bank changed · no inspection",amt:"$3.2M",key:"scam"},
+  {nm:"Fujairah Bunker Co.",dsc:"1,200 MT VLSFO · staged terms · SGS inspection",amt:"$0.9M",key:"legit"},
+];
+
+const cls=v=>v;
+function renderOffers(){
+  const mini=document.getElementById("mini-offers"),full=document.getElementById("full-offers");
+  let mh="",fh="";
+  OFFERS.forEach((o,i)=>{
+    const r=analyze(SAMPLES[o.key]);
+    const row=`<div class="offer-row" data-key="${o.key}">
+      <div class="supplier"><div class="nm">${o.nm}</div><div class="dsc">${o.dsc}</div></div>
+      <div class="amt">${o.amt}</div>
+      <div class="score-pill ${r.verdict}">${r.risk}</div>
+      <span class="badge ${r.verdict}">${r.verdict}</span>
+    </div>`;
+    if(i<3)mh+=row; fh+=row;
+  });
+  mini.innerHTML=mh; full.innerHTML=fh;
+  document.querySelectorAll(".offer-row").forEach(el=>{
+    el.addEventListener("click",()=>{
+      const k=el.getAttribute("data-key");
+      document.getElementById("offer-input").value=SAMPLES[k];
+      switchView("analyze"); runAnalysis();
+    });
+  });
+}
+
+function color(v){return v==="stop"?"var(--stop)":v==="caution"?"var(--caution)":"var(--go)";}
+function tint(v){return v==="stop"?"var(--stop-t)":v==="caution"?"var(--caution-t)":"var(--go-t)";}
+
+function renderResult(text){
+  const box=document.getElementById("result");
+  if(!text||!text.trim()){box.className="result empty";box.innerHTML="Result appears here.<br>Paste text or pick a sample, then run.";return;}
+  const r=analyze(text),col=color(r.verdict);
+  const circ=2*Math.PI*34,off=circ*(1-r.risk/100);
+  box.className="result";
+  box.innerHTML=`
+    <div class="verdict-head">
+      <div class="gauge">
+        <svg width="82" height="82"><circle cx="41" cy="41" r="34" stroke="var(--line)" stroke-width="8" fill="none"/>
+        <circle cx="41" cy="41" r="34" stroke="${col}" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${off}"/></svg>
+        <div class="num" style="color:${col}">${r.risk}</div>
+      </div>
+      <div class="vtxt"><div class="lbl">Risk score · verdict</div><div class="word" style="color:${col}">${r.verdict.toUpperCase()}</div></div>
+    </div>
+    <div class="rec" style="background:${tint(r.verdict)};color:var(--ink-2)">${r.rec}</div>
+    <div class="signals">
+      ${r.signals.map(s=>`
+        <div class="signal">
+          <span class="sdot" style="background:${s.pts>=15?'var(--stop)':s.pts>0?'var(--caution)':'var(--go)'}"></span>
+          <div class="sbody">
+            <div class="sname">${s.name}<span class="pts" style="color:${s.pts>=15?'var(--stop)':s.pts>0?'var(--caution)':'var(--go)'}">+${s.pts}</span></div>
+            <div class="sdesc">${s.notes.join(" · ")}</div>
+          </div>
+        </div>`).join("")}
+    </div>`;
+}
+
+function runAnalysis(){
+  const text=document.getElementById("offer-input").value,btn=document.getElementById("run");
+  btn.disabled=true;btn.textContent="Analyzing…";
+  setTimeout(()=>{renderResult(text);btn.disabled=false;btn.textContent="Run risk analysis";},420);
+}
+
+function switchView(v){
+  document.querySelectorAll(".view").forEach(s=>s.classList.toggle("active",s.id===v));
+  document.querySelectorAll("nav.views button").forEach(b=>b.classList.toggle("active",b.getAttribute("data-view")===v));
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll("nav.views button").forEach(b=>b.addEventListener("click",()=>switchView(b.getAttribute("data-view"))));
+document.querySelectorAll(".samples button").forEach(b=>b.addEventListener("click",()=>{document.getElementById("offer-input").value=SAMPLES[b.getAttribute("data-sample")];}));
+document.getElementById("run").addEventListener("click",runAnalysis);
+renderOffers();
+</script>
+</body>
+</html>
