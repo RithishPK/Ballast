@@ -167,6 +167,63 @@
   .note.coral{background:var(--coral-t);border-color:#ffd4cb;}
   .note.coral strong{color:var(--coral-d);}
 
+  /* ---------- demo video slot ---------- */
+  .video-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow);}
+  .video-card video{width:100%;border-radius:11px;display:block;background:#0d1626;aspect-ratio:16/9;}
+  .video-ph{width:100%;aspect-ratio:16/9;border-radius:11px;background:linear-gradient(135deg,#0d1626,#12263a);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:rgba(255,255,255,.75);border:1px dashed rgba(255,255,255,.2);}
+  .video-ph .play{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;}
+  .video-ph .cap{font-weight:600;font-size:14px;}
+  .video-ph .sub2{font-size:12px;color:rgba(255,255,255,.5);}
+  .video-note{font-size:12.5px;color:var(--dim);font-weight:500;margin:10px 4px 2px;}
+
+  /* ---------- section heading inside a view ---------- */
+  .subhead{font-weight:700;font-size:20px;letter-spacing:-.01em;margin:34px 0 4px;color:var(--ink);}
+  .subhead-sub{font-size:14.5px;color:var(--muted);font-weight:500;margin:0 0 16px;}
+
+  /* ---------- architecture diagram (layered) ---------- */
+  .archd{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;box-shadow:var(--shadow);}
+  .alayer{position:relative;}
+  .alayer + .alayer{margin-top:14px;padding-top:14px;}
+  .alabel{font-weight:700;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:9px;}
+  .arow{display:grid;gap:10px;}
+  .arow.c4{grid-template-columns:repeat(4,1fr);}
+  .arow.c3{grid-template-columns:repeat(3,1fr);}
+  .arow.c2{grid-template-columns:1.4fr 1fr;}
+  .abox{border-radius:11px;padding:13px 14px;font-weight:600;font-size:13px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);}
+  .abox .bt{font-weight:700;font-size:13.5px;color:var(--ink);display:block;margin-bottom:2px;}
+  .abox .bd{font-weight:500;font-size:12px;color:var(--muted);}
+  .abox.ing{background:var(--blue-t);border-color:#cfe0ff;}
+  .abox.eng{background:var(--primary-t);border-color:#bfe9ec;}
+  .abox.data{background:#f3eeff;border-color:#ddd0f7;}
+  .abox.out{background:var(--go-t);border-color:#c4ecd3;}
+  .abox.human{background:var(--caution-t);border-color:#f6dcae;}
+  .aarrow{display:flex;align-items:center;justify-content:center;color:var(--line-2);font-size:20px;height:20px;margin:2px 0;}
+  .engine-wrap{display:grid;grid-template-columns:1fr 260px;gap:12px;align-items:stretch;}
+  .engine-core{border:1.5px solid var(--primary);background:var(--primary-t);border-radius:13px;padding:14px;}
+  .engine-core .ec-t{font-weight:700;font-size:13px;color:var(--primary-d);margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+  .lenses{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+  .lens{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-weight:600;font-size:12px;color:var(--ink-2);}
+  .feeds{display:flex;flex-direction:column;gap:8px;justify-content:center;}
+  .feed-box{background:#f3eeff;border:1px solid #ddd0f7;border-radius:10px;padding:10px 12px;font-weight:600;font-size:12px;color:#5b3ea8;text-align:center;}
+  .feed-box small{display:block;font-weight:500;font-size:10.5px;color:#8b6fce;margin-top:1px;}
+
+  /* ---------- workflow flowchart ---------- */
+  .wf{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;box-shadow:var(--shadow);}
+  .wf-start{background:var(--ink);color:#fff;border-radius:11px;padding:13px 16px;font-weight:700;font-size:14px;text-align:center;max-width:340px;margin:0 auto;}
+  .wf-arrow{display:flex;justify-content:center;color:var(--line-2);font-size:20px;margin:8px 0;}
+  .wf-diamond{background:var(--surface-2);border:1.5px dashed var(--line-2);border-radius:11px;padding:13px 16px;font-weight:700;font-size:13.5px;text-align:center;max-width:340px;margin:0 auto;color:var(--ink);}
+  .wf-branches{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px;}
+  .wf-branch{border-radius:13px;padding:16px;border:1px solid var(--line);}
+  .wf-branch.go{background:var(--go-t);border-color:#c4ecd3;}
+  .wf-branch.caution{background:var(--caution-t);border-color:#f6dcae;}
+  .wf-branch.stop{background:var(--stop-t);border-color:#f6cccc;}
+  .wf-branch .wb-verdict{font-weight:800;font-size:13px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px;}
+  .wf-branch.go .wb-verdict{color:var(--go);} .wf-branch.caution .wb-verdict{color:var(--caution);} .wf-branch.stop .wb-verdict{color:var(--stop);}
+  .wf-branch .wb-step{font-weight:500;font-size:12.5px;color:var(--ink-2);padding:5px 0;border-top:1px solid rgba(0,0,0,.06);}
+  .wf-branch .wb-step:first-of-type{border-top:none;}
+  .wf-end{margin-top:16px;background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:13px 16px;font-weight:600;font-size:13px;text-align:center;color:var(--ink-2);}
+  .wf-end strong{color:var(--ink);}
+
   footer{border-top:1px solid var(--line);margin-top:46px;padding-top:24px;font-size:13px;color:var(--dim);font-weight:500;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;}
 
   @media(max-width:820px){
@@ -174,6 +231,9 @@
     .grid-2,.analyze-grid{grid-template-columns:1fr;}
     .flow{grid-template-columns:1fr 1fr;gap:26px 0;}
     .flow-node::after{content:none!important;}
+    .arow.c4,.arow.c3{grid-template-columns:1fr 1fr;}
+    .engine-wrap{grid-template-columns:1fr;}
+    .wf-branches{grid-template-columns:1fr;}
     .brand small{display:none;}
     nav.views button{padding:8px 11px;font-size:12.5px;}
   }
@@ -238,7 +298,7 @@
       <button data-view="situation" class="active">Situation</button>
       <button data-view="offers">Offers</button>
       <button data-view="analyze">Analyze</button>
-      <button data-view="how">How it works</button>
+      <button data-view="how">Demo &amp; architecture</button>
     </nav>
   </div>
 </div>
@@ -330,38 +390,115 @@
 
   <!-- ============ HOW ============ -->
   <section class="view how" id="how">
-    <p class="eyebrow">Systems &amp; architecture</p>
+    <p class="eyebrow">Demo &amp; architecture</p>
     <h1>What happens behind the verdict.</h1>
     <p class="sub">The same pattern I built for consumer scam detection in ScamShield, retargeted at B2B procurement: ingest whatever the seller sends, extract the claims, score them against what a shock makes suspicious, and hand a human a decision they can defend.</p>
 
-    <div class="arch">
-      <div class="flow">
-        <div class="flow-node"><div class="ico">📥</div><div class="ttl">Ingest</div><div class="dsc">Email, broker chat, PDF/invoice, or pasted text. OCR pulls fields from scanned docs.</div></div>
-        <div class="flow-node"><div class="ico">🧩</div><div class="ttl">Extract</div><div class="dsc">Supplier identity, price, quantity, payment terms &amp; bank details, delivery claims.</div></div>
-        <div class="flow-node"><div class="ico">⚖️</div><div class="ttl">Score</div><div class="dsc">Four risk lenses run in parallel against live market &amp; disruption context.</div></div>
-        <div class="flow-node"><div class="ico">🧑‍⚖️</div><div class="ttl">Decide</div><div class="dsc">Verdict + reasons to a human. Logged for audit &amp; supplier reputation.</div></div>
-      </div>
+    <!-- ===== DEMO VIDEO SLOT (drop a file at demo.mp4, or leave the placeholder) ===== -->
+    <div class="video-card">
+      <video controls preload="metadata">
+        <source src="demo.mp4" type="video/mp4">
+      </video>
+    </div>
+    <p class="video-note">▸ 2-minute product walkthrough. To add it, drop your file next to index.html as <b>demo.mp4</b> (or ask Claude to swap this for a YouTube embed).</p>
 
-      <div class="layer">
-        <h4>The four risk lenses</h4>
-        <div class="chips">
-          <span class="chip">Supplier legitimacy — domain age, trade history, entity match</span>
-          <span class="chip">Payment integrity — advance %, changed / offshore accounts, BEC signals</span>
-          <span class="chip">Price anomaly — vs live benchmark (gouging &amp; too-good-to-be-true)</span>
-          <span class="chip">Delivery plausibility — quantity vs shortage, inspection refusal, route sanity</span>
+    <!-- ===== ARCHITECTURE DIAGRAM ===== -->
+    <div class="subhead">System architecture</div>
+    <p class="subhead-sub">How a raw supplier message becomes a defensible verdict.</p>
+    <div class="archd">
+      <div class="alayer">
+        <div class="alabel">1 · Ingest</div>
+        <div class="arow c4">
+          <div class="abox ing"><span class="bt">Email</span><span class="bd">forwarded offers</span></div>
+          <div class="abox ing"><span class="bt">Broker chat</span><span class="bd">WhatsApp / Telegram</span></div>
+          <div class="abox ing"><span class="bt">PDF / invoice</span><span class="bd">OCR extraction</span></div>
+          <div class="abox ing"><span class="bt">Pasted text</span><span class="bd">manual entry</span></div>
         </div>
       </div>
-
-      <div class="layer">
-        <h4>Stack (prototype → production)</h4>
-        <div class="chips">
-          <span class="chip">Few-shot LLM classifier (Llama 3.3 / Claude)</span>
-          <span class="chip">EasyOCR — document extraction</span>
-          <span class="chip">Market price + route-status feeds</span>
-          <span class="chip">Supplier reputation store (Postgres)</span>
-          <span class="chip">FastAPI</span>
-          <span class="chip">Audit log</span>
+      <div class="aarrow">↓</div>
+      <div class="alayer">
+        <div class="alabel">2 · Extract</div>
+        <div class="arow c4">
+          <div class="abox"><span class="bt">Supplier identity</span></div>
+          <div class="abox"><span class="bt">Price &amp; quantity</span></div>
+          <div class="abox"><span class="bt">Payment terms + bank</span></div>
+          <div class="abox"><span class="bt">Delivery claims</span></div>
         </div>
+      </div>
+      <div class="aarrow">↓</div>
+      <div class="alayer">
+        <div class="alabel">3 · Risk engine</div>
+        <div class="engine-wrap">
+          <div class="engine-core">
+            <div class="ec-t">⚖️ Four risk lenses · few-shot LLM classifier</div>
+            <div class="lenses">
+              <div class="lens">Supplier legitimacy</div>
+              <div class="lens">Payment integrity (BEC)</div>
+              <div class="lens">Price anomaly</div>
+              <div class="lens">Delivery plausibility</div>
+            </div>
+          </div>
+          <div class="feeds">
+            <div class="feed-box">Market price feed<small>live benchmark</small></div>
+            <div class="feed-box">Route-status feed<small>disruption context</small></div>
+            <div class="feed-box">Supplier reputation DB<small>Postgres · history</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="aarrow">↓</div>
+      <div class="alayer">
+        <div class="alabel">4 · Decide</div>
+        <div class="arow c2">
+          <div class="abox out"><span class="bt">Verdict + reasons</span><span class="bd">go / caution / stop, with the signals behind it</span></div>
+          <div class="abox human"><span class="bt">Human decision</span><span class="bd">advises, never auto-blocks</span></div>
+        </div>
+        <div class="aarrow">↓</div>
+        <div class="arow"><div class="abox"><span class="bt">Audit log + supplier reputation update</span><span class="bd">every verdict is recorded and feeds future scoring</span></div></div>
+      </div>
+    </div>
+
+    <!-- ===== WORKFLOW DIAGRAM ===== -->
+    <div class="subhead">Decision workflow</div>
+    <p class="subhead-sub">What a procurement desk actually does with a scored offer, under time pressure.</p>
+    <div class="wf">
+      <div class="wf-start">📩 New supplier offer arrives</div>
+      <div class="wf-arrow">↓</div>
+      <div class="wf-start" style="background:var(--surface-2);color:var(--ink);border:1px solid var(--line);">Extract claims &amp; run risk engine</div>
+      <div class="wf-arrow">↓</div>
+      <div class="wf-diamond">◆ Risk level?</div>
+      <div class="wf-branches">
+        <div class="wf-branch go">
+          <div class="wb-verdict">● Go · low</div>
+          <div class="wb-step">Standard due diligence</div>
+          <div class="wb-step">Verify registration</div>
+          <div class="wb-step">Staged payment vs shipping docs</div>
+        </div>
+        <div class="wf-branch caution">
+          <div class="wb-verdict">● Caution · medium</div>
+          <div class="wb-step">Confirm bank details out-of-band</div>
+          <div class="wb-step">Benchmark the price</div>
+          <div class="wb-step">Require independent inspection before advance</div>
+        </div>
+        <div class="wf-branch stop">
+          <div class="wb-verdict">● Stop · high</div>
+          <div class="wb-step">Do not wire funds</div>
+          <div class="wb-step">Escalate for manual review</div>
+          <div class="wb-step">Walk away if unresolved</div>
+        </div>
+      </div>
+      <div class="wf-end">All paths → <strong>logged to audit trail</strong> and the supplier reputation store, sharpening future scoring.</div>
+    </div>
+
+    <div class="subhead">Stack</div>
+    <p class="subhead-sub">Prototype today, production path noted.</p>
+    <div class="archd" style="padding:20px;">
+      <div class="chips">
+        <span class="chip">Few-shot LLM classifier (Llama 3.3 / Claude)</span>
+        <span class="chip">EasyOCR — document extraction</span>
+        <span class="chip">Market price + route-status feeds</span>
+        <span class="chip">Supplier reputation store (Postgres)</span>
+        <span class="chip">FastAPI</span>
+        <span class="chip">Audit log</span>
       </div>
     </div>
 
@@ -414,6 +551,7 @@ function analyze(text){
   const adv=t.match(/(\d{2,3})\s*%\s*(advance|upfront|now)/);
   if(adv&&parseInt(adv[1])>=50){pay+=16;payNotes.push("large upfront payment demanded ("+adv[1]+"% advance)");}
   else if(/100%\s*(now|advance|upfront)|wire\s*(100%|full)/.test(t)){pay+=18;payNotes.push("full payment demanded before delivery");}
+  else if(adv&&parseInt(adv[1])>=40){pay+=6;payNotes.push("advance of "+adv[1]+"% — elevated; tie funds to shipping documents");}
   else if(adv){payNotes.push("advance of "+adv[1]+"% — within normal range for a shock");}
   if(pay===0)payNotes.push("payment terms look standard (staged against shipping docs)");
   signals.push({name:"Payment integrity",pts:pay,notes:payNotes}); risk+=pay;
@@ -439,7 +577,8 @@ function analyze(text){
   if(/no inspection|inspection not|no time.*inspect|cannot inspect/.test(t)){dl+=16;dlNotes.push("inspection refused — prevents verifying the cargo exists");}
   if(/gmail|yahoo|hotmail|outlook\.com/.test(t)){dl+=14;dlNotes.push("free email domain for a large B2B energy deal");}
   if(/immediate delivery|loading tomorrow|available now/.test(t)&&/shortage|suspend|closed|disruption|hormuz/.test(t)){dl+=10;dlNotes.push("implausibly fast availability during a supply shortage");}
-  if(/registered|dmcc|since \d{4}|trading since|sgs|surveyor/.test(t)){dl-=6;dlNotes.push("verifiable trade markers present (registration / independent inspection)");}
+  if(/newer (trading )?desk|new to the market|no (trade )?history|recently established|can share references|unestablished|new(ly)? (registered|formed)/.test(t)){dl+=12;dlNotes.push("self-declared new / unestablished desk — limited verifiable history");}
+  if(/registered|dmcc|since \d{4}|trading since|sgs|surveyor|independent inspection/.test(t)){dl-=5;dlNotes.push("verifiable trade markers present (registration / independent inspection)");}
   dl=Math.max(dl,0);
   if(dlNotes.length===0)dlNotes.push("no strong legitimacy signals either way");
   signals.push({name:"Delivery & supplier plausibility",pts:dl,notes:dlNotes}); risk+=dl;
